@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유영호 홈페이지</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #ccffcc;
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      background: #333;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      text-align: center;
+      padding-top: 20px;
+    }
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 15px;
+      font-size: 1.3em;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .sidebar a:hover {
+      background: #444;
+    }
+    .main {
+      margin-left: 250px;
+      padding: 40px;
+      width: calc(100% - 250px);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    section {
+      display: none;
+      width: 100%;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    section.show {
+      display: block;
+      opacity: 1;
+    }
+    .home-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+    }
+    .home-container img {
+      max-width: 300px;
+      border-radius: 0;
+    }
+    .home-container h1 {
+      font-size: 2.5em;
+      color: #333;
+      margin: 0;
+    }
+    h2 {
+      border-bottom: 2px solid #333;
+      padding-bottom: 10px;
+      font-size: 2.2em;
+      margin-bottom: 20px;
+    }
+    p, li {
+      font-size: 1.3em;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      font-size: 1em;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    .qna-item {
+      border: 1px solid #333;
+      padding: 10px;
+      margin: 10px 0;
+      text-align: left;
+    }
+    .answer {
+      margin-left: 20px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <a onclick="showSection('home')">메인</a>
+    <a onclick="showSection('intro')">내 소개</a>
+    <a onclick="showSection('spec')">스펙</a>
+    <a onclick="showSection('awards')">수상경력</a>
+    <a onclick="showSection('contact')">연락처</a>
+    <a onclick="showSection('vision')">포부</a>
+    <a onclick="showSection('qna')">Q&A</a>
+  </div>
+
+  <div class="main">
+    <section id="home" class="show">
+      <div class="home-container">
+        <img src="C:\Users\user\Pictures\605.jpg" alt="내 사진">
+        <h1>주니어 개발자 유영호</h1>
+      </div>
+    </section>
+
+    <section id="intro">
+      <h2>내 소개</h2>
+      <ul style="list-style:none; padding:0;">
+        <li>생년월일: 2004년 10월 16일</li>
+        <li>대학교: 대전보건대학교 졸업</li>
+        <li>학과: AI소프트웨어학과</li>
+        <li>MBTI: NETJ</li>
+        <li>장점: 근면성실하고 인성이 참 바르다</li>
+        <li>단점: 걱정이 많다</li>
+      </ul>
+    </section>
+
+    <section id="spec">
+      <h2>스펙</h2>
+      <ul style="list-style:none; padding:0;">
+        <li>HTML, CSS, JavaScript</li>
+        <li>React, Node.js</li>
+        <li>Database: MySQL, MongoDB</li>
+      </ul>
+    </section>
+
+    <section id="awards">
+      <h2>수상경력</h2>
+      <ul style="list-style:none; padding:0;">
+        <li>디자인씽킹 경연 우수상</li>
+      </ul>
+    </section>
+
+    <section id="contact">
+      <h2>연락처</h2>
+      <p>GitHub: github.com/young777</p>
+      <p>이메일: yooyh6154@naver.com</p>
+      <p>이메일: yh61544@gmail.com</p>
+      <p>전화번호: 010-5502-6154</p>
+    </section>
+
+    <section id="vision">
+      <h2>포부</h2>
+      <p>앞으로 AI와 소프트웨어 분야에서 전문성을 쌓아 사회에 기여하는 개발자가 되고 싶습니다.</p>
+    </section>
+
+    <!-- Q&A 섹션 -->
+    <section id="qna">
+      <h2>Q&A</h2>
+      <p>궁금한 점을 남겨주세요. 답변도 달 수 있습니다.</p>
+      <textarea id="questionInput" placeholder="질문을 입력하세요..."></textarea><br>
+      <button onclick="addQuestion()">질문 등록</button>
+      <div id="qnaList"></div>
+    </section>
+  </div>
+
+  <script>
+    function showSection(id) {
+      const sections = document.querySelectorAll('section');
+      sections.forEach(sec => sec.classList.remove('show'));
+      document.getElementById(id).classList.add('show');
+    }
+
+    // 질문 추가
+    function addQuestion() {
+      const input = document.getElementById('questionInput');
+      const question = input.value.trim();
+      if (question) {
+        let qna = JSON.parse(localStorage.getItem('qna')) || [];
+        qna.push({ question: question, answers: [] });
+        localStorage.setItem('qna', JSON.stringify(qna));
+        displayQna();
+        input.value = '';
+      }
+    }
+
+    // 답변 추가
+    function addAnswer(index) {
+      const answerInput = document.getElementById('answerInput_' + index);
+      const answer = answerInput.value.trim();
+      if (answer) {
+        let qna = JSON.parse(localStorage.getItem('qna')) || [];
+        qna[index].answers.push(answer);
+        localStorage.setItem('qna', JSON.stringify(qna));
+        displayQna();
+      }
+    }
+
+    // Q&A 표시
+    function displayQna() {
+      const container = document.getElementById('qnaList');
+      container.innerHTML = '';
+      let qna = JSON.parse(localStorage.getItem('qna')) || [];
+
+      qna.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'qna-item';
+
+        const q = document.createElement('p');
+        q.innerHTML = `<strong>Q${index+1}:</strong> ${item.question}`;
+        div.appendChild(q);
+
+        item.answers.forEach((ans, i) => {
+          const a = document.createElement('p');
+          a.className = 'answer';
+          a.innerHTML = `↳ A${i+1}: ${ans}`;
+          div.appendChild(a);
+        });
+
+        const answerBox = document.createElement('textarea');
+        answerBox.id = 'answerInput_' + index;
+        answerBox.placeholder = "답변을 입력하세요...";
+        div.appendChild(answerBox);
+
+        const answerBtn = document.createElement('button');
+        answerBtn.textContent = "답변 등록";
+        answerBtn.onclick = () => addAnswer(index);
+        div.appendChild(answerBtn);
+
+        container.appendChild(div);
+      });
+    }
+
+    window.onload = function() {
+      displayQna();
+    };
+  </script>
+</body>
+</html>
